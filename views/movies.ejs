@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../public/styles.css">
+    <title>Movie details</title>
+</head>
+<body>
+<div class="central">
+<% include ./partials/header %>
+    <h1><%= title %></h1>
+
+    <div class="french-movies">
+        <% for(movie of movies) { %>
+            <div><%= movie.title %> (<%= movie.year %>)</div>
+        <% } %>
+    </div>
+    <br>
+    <div>
+        <form action="/movies" method="post">
+            <label for="movietitle">Titre du film</label>
+            <input type="text" name="movietitle" id="movietitle">
+            <label for="movieyear">Année du film</label>
+            <input type="text" name="movieyear" id="movieyear">
+            <button type="submit">ajouter</button> 
+        </form>
+    </div>
+</div>
+    <% include ./partials/footer %>
+</body>
+</html>
+<script>
+    const form = document.querySelector('form')
+    // écoute un event 1er param type, 2eme function event
+    form.addEventListener('submit', addMovie)
+    // function event
+    function addMovie(event){
+        event.preventDefault()
+        // requete
+        fetch('/movies', {
+            // on precite le type de requete
+            method: 'POST',
+            // le format de donné
+            body: new FormData(form)
+        })
+        .then(checkStatus) // function checkstatus verif et add element
+        .catch(function(error){
+            console.error('request failed', error)
+        })
+    }
+    function checkStatus(response) {
+        // on verifie si la response et entre 200 et 300
+        // ce qui signifirai que la requete est bonne
+        if(response.status >= 200 && response.status < 300) {
+            // créé une div
+            let newMovieDiv = document.createElement('div')
+            // on récup data entrer ds les input
+            const movietitle = document.getElementById('movietitle').value
+            const movieyear = document.getElementById('movieyear').value
+            // on ajout ses data dans la new div
+            newMovieDiv.innerHTML = `${movietitle} (${movieyear})`
+            // on ajoute la div dans la div qui contient nos film
+            document.querySelector('.french-movies').appendChild(newMovieDiv)
+        }
+    }
+</script>
