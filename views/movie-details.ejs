@@ -6,12 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="../public/styles.css">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <title>Movie details</title>
 </head>
 <body>
-<div class="central">
+<div id="details" class="central">
 <% include ./partials/header %>
-    <h1>Details</h1>
+    <h1>Details {{movieId}}</h1>
     <div>
         <form action="/movie-details/<%= movie._id %>" method="post">
             <legend>Modifier le film</legend>
@@ -21,12 +22,32 @@
             <input type="text" name="movieyear" id="movieyear" value="<%= movie.movieyear %>">
             <button type="submit">Modifier</button>
         </form>
-        <button id="btnSuppr">suppr</button>
+        <button id="btnSuppr" v-on:click="deleteDocument">suppr</button>
     </div>
 </div>
     <% include ./partials/footer %>
     <script>
-        var btnSuppr = document.getElementById('btnSuppr')
+        var app = new Vue({
+            el: '#details',
+            data: {
+                movieId : <%- JSON.stringify(movie._id) %>,
+            },
+            created: () => {
+            },
+            methods: {
+                deleteDocument: () => {
+                    console.log('hiii')
+                    axios.delete(`http://localhost:3000/movie-details/${this.movieId}`)
+                    .then((response) => {
+                        window.location = '/movies'
+                    })
+                    .catch((error) => {
+                        console.error(error)
+                    })
+                }
+            }
+        })
+        /*var btnSuppr = document.getElementById('btnSuppr')
         btnSuppr.addEventListener('click', deleteDocument)
 
         function deleteDocument() {
@@ -40,7 +61,7 @@
             .catch(function(error) {
                 console.error(error)
             })
-        }
+        }*/
     </script>
 </body>
 </html>

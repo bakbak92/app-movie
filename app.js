@@ -33,7 +33,11 @@ app.get('/', (req, res) => {
     res.render('index')
 })
 
-app.get('/movies', movieController.getMovies)
+app.get('/movies', (req, res) => {
+    res.render('movies')
+})
+
+app.get('/movielist' , movieController.getMovies)
 
 app.post('/movies', upload.fields([]), movieController.postMovies)
 
@@ -51,16 +55,7 @@ app.get('/movie-search', (req, res) => {
     res.render('movie-search')
 })
 
-app.get('/login', (req, res) => {
-    res.render('login', { title: 'Espace membre'})
-})
 
-const fakeUser = { email: 'testuser@testmail.fr', password: 'qsd' }
-
-
-app.get('/member-only'), (req, res) =>{
-    console.log('req.user', req.user)
-}
 
 app.listen(port, () => {
     console.log(`listening on port ${port}`)

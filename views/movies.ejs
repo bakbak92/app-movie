@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <link rel="stylesheet" href="../public/styles.css">
     <title>Movie details</title>
 </head>
 <body>
-<div class="central">
+<div id="movies" class="central">
 <% include ./partials/header %>
-    <h1><%= title %></h1>
+    <h1>{{title}}</h1>
 
-    <div class="french-movies">
-        <% for(movie of movies) { %>
-            <div><%= movie.movietitle %> (<%= movie.movieyear %>) <a href="/movie-details/<%= movie._id%>">voir details</a> <a href="/movie-delete/<%= movie._id %>">supprimer</a></div>
-        <% } %>
+    <div  v-for="movie in movies" class="french-movies">
+        {{movie.movietitle}} ({{movie.movieyear}}) <a v-bind:href=`/movie-details/${movie._id}`>details</a>
     </div>
     <br>
     <div>
-        <form action="/movies" method="post">
+        <form action="/movies" method="post" >
             <label for="movietitle">Titre du film</label>
             <input type="text" name="movietitle" id="movietitle">
             <label for="movieyear">Année du film</label>
@@ -32,37 +32,19 @@
 </body>
 </html>
 <script>
-    const form = document.querySelector('form')
-    // écoute un event 1er param type, 2eme function event
-    form.addEventListener('submit', addMovie)
-    // function event
-    function addMovie(event){
-        event.preventDefault()
-        // requete
-        fetch('/movies', {
-            // on precite le type de requete
-            method: 'POST',
-            // le format de donné
-            body: new FormData(form)
-        })
-        .then(checkStatus) // function checkstatus verif et add element
-        .catch(function(error){
-            console.error('request failed', error)
-        })
-    }
-    function checkStatus(response) {
-        // on verifie si la response et entre 200 et 300
-        // ce qui signifirai que la requete est bonne
-        if(response.status >= 200 && response.status < 300) {
-            // créé une div
-            let newMovieDiv = document.createElement('div')
-            // on récup data entrer ds les input
-            const movietitle = document.getElementById('movietitle').value
-            const movieyear = document.getElementById('movieyear').value
-            // on ajout ses data dans la new div
-            newMovieDiv.innerHTML = `${movietitle} (${movieyear})`
-            // on ajoute la div dans la div qui contient nos film
-            document.querySelector('.french-movies').appendChild(newMovieDiv)
+    var app = new Vue({
+        el: '#movies',
+        data: {
+            movies: [],
+            title: 'Film préféré',
+            url: '/movie-details',
+        },
+        created: () => {
+            axios.get('http://localhost:3000/movielist').then((response) => {
+                app.movies = response.data.frenchMovies
+            })
+        },
+        methods: {
         }
-    }
+    })
 </script>

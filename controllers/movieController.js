@@ -1,7 +1,6 @@
 const Movie = require('../model/Movie')
 
 exports.getMovies = (req, res) => {
-    const title = "Liste des tes films préféré"
     frenchMovies = []
     // récup data de la db 
     //1 param l'erreur , 2 data
@@ -11,7 +10,8 @@ exports.getMovies = (req, res) => {
             res.sendStatus(500)
         }else{
             frenchMovies = movies
-            res.render('movies', { title: title, movies: frenchMovies})
+            
+            res.send({frenchMovies})
         }
     })
 }
@@ -34,7 +34,7 @@ exports.postMovies = (req, res) => {
                 return
             }else {
                console.log(savedMovie)
-               res.sendStatus(201) 
+               res.send(myMovie) 
             }
         })
     }
